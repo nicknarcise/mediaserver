@@ -117,7 +117,7 @@ services:
 
   readarr:
     container_name: readarr
-    image: linuxserver/readarr:latest
+    image: linuxserver/readarr:develop
     restart: unless-stopped
     network_mode: host
     environment:
