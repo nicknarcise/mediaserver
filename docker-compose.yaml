@@ -54,6 +54,18 @@ services:
       - ${ROOT}/downloads/torrent-blackhole:/downloads # place where to put .torrent files for manual download
       - ${ROOT}/config/jackett:/config # config files
 
+  prowlarr:
+    container_name: prowlarr
+    image: linuxserver/prowlarr:latest
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${ROOT}/config/prowlarr:/config
+
   sonarr:
     container_name: sonarr
     image: linuxserver/sonarr:latest
