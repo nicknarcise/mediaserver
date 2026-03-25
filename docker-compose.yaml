@@ -66,6 +66,15 @@ services:
     volumes:
       - ${ROOT}/config/prowlarr:/config
 
+  flaresolverr:
+    container_name: flaresolverr
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - LOG_LEVEL=info
+      - TZ=${TZ}
+
   sonarr:
     container_name: sonarr
     image: linuxserver/sonarr:latest
