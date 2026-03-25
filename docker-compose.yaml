@@ -2,7 +2,7 @@ version: "3.4"
 services:
   vpn:
     container_name: vpn
-    image: qmcgaw/gluetun:latest
+    image: qmcgaw/gluetun:v3
     cap_add:
       - NET_ADMIN
     restart: unless-stopped
@@ -53,19 +53,6 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ${ROOT}/downloads/torrent-blackhole:/downloads # place where to put .torrent files for manual download
       - ${ROOT}/config/jackett:/config # config files
-
-  nzbget:
-    container_name: nzbget
-    image: linuxserver/nzbget:latest
-    restart: unless-stopped
-    network_mode: host
-    environment:
-      - PUID=${PUID} # default user id, defined in .env
-      - PGID=${PGID} # default group id, defined in .env
-      - TZ=${TZ} # timezone, defined in .env
-    volumes:
-      - ${ROOT}/downloads:/downloads # download folder
-      - ${ROOT}/config/nzbget:/config # config files
 
   sonarr:
     container_name: sonarr
@@ -141,3 +128,14 @@ services:
       - ${ROOT}/config/readarr:/config # config files
       - ${ROOT}/complete/ebooks:/ebooks # tv shows folder
       - ${ROOT}/downloads:/downloads # download folder
+
+  watchtower:
+    container_name: watchtower
+    image: containrrr/watchtower:latest
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_SCHEDULE=0 0 4 * * *
+      - TZ=${TZ}
