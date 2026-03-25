@@ -17,6 +17,12 @@ services:
       - OPENVPN_PASSWORD=${VPN_PASS}
       - SERVER_HOSTNAMES=nyc-b70.ipvanish.com
       - TZ=${TZ}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "https://ipinfo.io/ip"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   deluge:
     container_name: deluge
@@ -30,6 +36,9 @@ services:
     volumes:
       - ${ROOT}/downloads:/downloads # downloads folder
       - ${ROOT}/config/deluge:/config # config files
+    depends_on:
+      vpn:
+        condition: service_healthy
 
   jackett:
     container_name: jackett
