@@ -114,21 +114,6 @@ services:
       - ${ROOT}/complete/music:/music # tv shows folder
       - ${ROOT}/downloads:/downloads # download folder
 
-  readarr:
-    container_name: readarr
-    image: linuxserver/readarr:develop
-    restart: unless-stopped
-    network_mode: host
-    environment:
-      - PUID=${PUID} # default user id, defined in .env
-      - PGID=${PGID} # default group id, defined in .env
-      - TZ=${TZ} # timezone, defined in .env
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ${ROOT}/config/readarr:/config # config files
-      - ${ROOT}/complete/ebooks:/ebooks # tv shows folder
-      - ${ROOT}/downloads:/downloads # download folder
-
   watchtower:
     container_name: watchtower
     image: containrrr/watchtower:latest
