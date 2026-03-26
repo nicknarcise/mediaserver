@@ -36,7 +36,7 @@ services:
     volumes:
       - ${ROOT}/downloads:/downloads
       - ${ROOT}/config/deluge:/config
-      - /share/Configs/deluge/custom-cont-init.d:/custom-cont-init.d:ro
+      - /share/Media/config/deluge/custom-cont-init.d:/custom-cont-init.d:ro
     depends_on:
       vpn:
         condition: service_healthy
