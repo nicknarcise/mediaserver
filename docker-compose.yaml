@@ -55,6 +55,8 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
       - WEBUI_PORT=8080
+      - WEBUI_USERNAME=admin
+      - WEBUI_PASSWORD=${QBIT_PASSWORD}
     volumes:
       - /share/Media/config/qbittorrent:/config
       - /share/Media/downloads/torrents:/downloads
