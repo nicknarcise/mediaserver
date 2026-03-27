@@ -57,7 +57,7 @@ services:
       - WEBUI_PORT=8080
     volumes:
       - /share/Media/config/qbittorrent:/config
-      - /share/Media/downloads:/downloads
+      - /share/Media/downloads/torrents:/downloads
 
   jackett:
     container_name: jackett
@@ -106,7 +106,8 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ${ROOT}/config/sonarr:/config # config files
-      - ${ROOT}/complete/tv:/tv # tv shows folder
+      - /share/Media/downloads/media/tv:/tv
+      - /share/Media/downloads/torrents/complete:/downloads/complete
       - ${ROOT}/downloads:/downloads # download folder
 
   radarr:
@@ -121,7 +122,8 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ${ROOT}/config/radarr:/config # config files
-      - ${ROOT}/complete/movies:/movies # movies folder
+      - /share/Media/downloads/media/movies:/movies
+      - /share/Media/downloads/torrents/complete:/downloads/complete
       - ${ROOT}/downloads:/downloads # download folder
 
   bazarr:
@@ -151,7 +153,8 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ${ROOT}/config/lidarr:/config # config files
-      - ${ROOT}/complete/music:/music # tv shows folder
+      - /share/Media/downloads/media/music:/music
+      - /share/Media/downloads/torrents/complete:/downloads/complete
       - ${ROOT}/downloads:/downloads # download folder
 
   watchtower:
