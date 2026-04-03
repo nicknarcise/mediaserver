@@ -107,7 +107,7 @@ services:
       - TZ=${TZ} # timezone, defined in .env
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /share/Media/config/sonarr:/config
+      - ${ROOT}/config/sonarr:/config
       - /share/Media/downloads/media/tv:/tv
       - /share/Media/downloads/torrents/tv:/downloads/tv
 
@@ -122,7 +122,7 @@ services:
       - TZ=${TZ} # timezone, defined in .env
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /share/Media/config/radarr:/config
+      - ${ROOT}/config/radarr:/config
       - /share/Media/downloads/media/movies:/movies
       - /share/Media/downloads/torrents/movies:/downloads/movies
 
@@ -152,7 +152,7 @@ services:
       - TZ=${TZ} # timezone, defined in .env
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /share/Media/config/lidarr:/config
+      - ${ROOT}/config/lidarr:/config
       - /share/Media/downloads/media/music:/music
       - /share/Media/downloads/torrents/music:/downloads/music
 
