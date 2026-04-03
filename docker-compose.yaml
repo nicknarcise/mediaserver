@@ -107,10 +107,9 @@ services:
       - TZ=${TZ} # timezone, defined in .env
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ${ROOT}/config/sonarr:/config # config files
+      - ${ROOT}/config/sonarr:/config
       - /share/Media/downloads/media/tv:/tv
-      - /share/Media/downloads/torrents/complete:/downloads/complete
-      - ${ROOT}/downloads:/downloads # download folder
+      - /share/Media/downloads/torrents/tv:/downloads/tv
 
   radarr:
     container_name: radarr
@@ -123,10 +122,9 @@ services:
       - TZ=${TZ} # timezone, defined in .env
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ${ROOT}/config/radarr:/config # config files
+      - ${ROOT}/config/radarr:/config
       - /share/Media/downloads/media/movies:/movies
-      - /share/Media/downloads/torrents/complete:/downloads/complete
-      - ${ROOT}/downloads:/downloads # download folder
+      - /share/Media/downloads/torrents/movies:/downloads/movies
 
   bazarr:
     container_name: bazarr
@@ -154,10 +152,9 @@ services:
       - TZ=${TZ} # timezone, defined in .env
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ${ROOT}/config/lidarr:/config # config files
+      - ${ROOT}/config/lidarr:/config
       - /share/Media/downloads/media/music:/music
-      - /share/Media/downloads/torrents/complete:/downloads/complete
-      - ${ROOT}/downloads:/downloads # download folder
+      - /share/Media/downloads/torrents/music:/downloads/music
 
   watchtower:
     container_name: watchtower
