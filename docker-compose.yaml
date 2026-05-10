@@ -60,6 +60,7 @@ services:
     volumes:
       - /share/Media/config/qbittorrent:/config
       - /share/Media/downloads/torrents:/downloads
+      - /share/Media/config/qbittorrent/custom-cont-init.d:/custom-cont-init.d:ro
 
   jackett:
     container_name: jackett
