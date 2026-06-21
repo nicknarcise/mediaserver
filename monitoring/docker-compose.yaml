@@ -19,7 +19,9 @@ services:
     ports:
       - 12345:12345 # Alloy UI / health — http://192.168.1.5:12345
     volumes:
-      - ${ROOT}/config/alloy/config.alloy:/etc/alloy/config.alloy:ro
+      # Config ships with the repo clone (relative to this compose file), so no
+      # host path / ROOT is needed — works with Portainer's Repository deploy.
+      - ./config.alloy:/etc/alloy/config.alloy:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /var/log:/var/log:ro
       - alloy-data:/var/lib/alloy/data
