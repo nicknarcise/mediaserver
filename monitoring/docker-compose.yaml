@@ -1,0 +1,28 @@
+# Observability stack — deploy as its OWN Portainer stack, separate from the
+# mediaserver stack so it keeps capturing logs across media-stack redeploys.
+#
+# Alloy reads the Docker socket, so it sees every container on the host
+# regardless of which stack created it.
+services:
+  alloy:
+    container_name: alloy
+    image: grafana/alloy:latest
+    restart: unless-stopped
+    command:
+      - run
+      - /etc/alloy/config.alloy
+      - --storage.path=/var/lib/alloy/data
+      - --server.http.listen-addr=0.0.0.0:12345
+    environment:
+      - LOKI_PUSH_URL=${LOKI_PUSH_URL}
+      - TZ=${TZ}
+    ports:
+      - 12345:12345 # Alloy UI / health — http://192.168.1.5:12345
+    volumes:
+      - ${ROOT}/config/alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/log:/var/log:ro
+      - alloy-data:/var/lib/alloy/data
+
+volumes:
+  alloy-data:
