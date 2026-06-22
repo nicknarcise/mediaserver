@@ -19,9 +19,11 @@ services:
     ports:
       - 12345:12345 # Alloy UI / health — http://192.168.1.5:12345
     volumes:
-      # Config ships with the repo clone (relative to this compose file), so no
-      # host path / ROOT is needed — works with Portainer's Repository deploy.
-      - ./config.alloy:/etc/alloy/config.alloy:ro
+      # Mount the config DIRECTORY (not a single file) onto /etc/alloy — single-
+      # file bind mounts are unreliable on the Asustor docker-ce/overlay2 setup
+      # (runc treats the source as a dir -> "mount a directory onto a file").
+      # Ships with the repo clone, so no host path / ROOT needed.
+      - ./alloy:/etc/alloy:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /var/log:/var/log:ro
       - alloy-data:/var/lib/alloy/data
