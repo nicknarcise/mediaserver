@@ -110,7 +110,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ${ROOT}/config/sonarr:/config
       - /share/Media/downloads/media/tv:/tv
-      - /share/Media/downloads/torrents/tv:/downloads/tv
+      - /share/Media/downloads/torrents:/downloads # full client root so /downloads/<release> resolves
 
   radarr:
     container_name: radarr
@@ -125,7 +125,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ${ROOT}/config/radarr:/config
       - /share/Media/downloads/media/movies:/movies
-      - /share/Media/downloads/torrents/movies:/downloads/movies
+      - /share/Media/downloads/torrents:/downloads # full client root so /downloads/<release> resolves
 
   bazarr:
     container_name: bazarr
@@ -155,7 +155,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ${ROOT}/config/lidarr:/config
       - /share/Media/downloads/media/music:/music
-      - /share/Media/downloads/torrents/music:/downloads/music
+      - /share/Media/downloads/torrents:/downloads # full client root so /downloads/<release> resolves
 
   watchtower:
     container_name: watchtower
