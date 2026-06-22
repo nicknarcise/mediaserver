@@ -110,7 +110,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ${ROOT}/config/sonarr:/config
       - /share/Media/downloads/media/tv:/tv
-      - /share/Media/downloads/media/kids-tv:/kids-tv # 2nd root folder for kids shows
+      - /share/Media/downloads/media/kids.tv:/kids-tv # 2nd root folder for kids shows (host folder is kids.tv)
       - /share/Media/downloads/torrents:/downloads # full client root so /downloads/<release> resolves
 
   radarr:
@@ -126,7 +126,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ${ROOT}/config/radarr:/config
       - /share/Media/downloads/media/movies:/movies
-      - /share/Media/downloads/media/kids-movies:/kids-movies # 2nd root folder for kids movies
+      - /share/Media/downloads/media/kids.movies:/kids-movies # 2nd root folder for kids movies (host folder is kids.movies)
       - /share/Media/downloads/torrents:/downloads # full client root so /downloads/<release> resolves
 
   bazarr:
