@@ -3,6 +3,14 @@
 #
 # Alloy reads the Docker socket, so it sees every container on the host
 # regardless of which stack created it.
+#
+# The Alloy config is INLINED via Docker `configs` instead of bind-mounted.
+# Portainer git-stack RELATIVE bind mounts resolve to /data/compose/<id>/...
+# which is valid inside the Portainer container but not a real path on the
+# host, so a mounted ./alloy comes up empty. Inlining lets Docker materialize
+# the file itself — fully self-contained and GitOps-friendly.
+# (Absolute mounts like docker.sock and /var/log are fine; only the repo-
+# relative config mount was the problem.)
 services:
   alloy:
     container_name: alloy
@@ -18,15 +26,89 @@ services:
       - TZ=${TZ}
     ports:
       - 12345:12345 # Alloy UI / health — http://192.168.1.5:12345
+    configs:
+      - source: alloy_config
+        target: /etc/alloy/config.alloy
     volumes:
-      # Mount the config DIRECTORY (not a single file) onto /etc/alloy — single-
-      # file bind mounts are unreliable on the Asustor docker-ce/overlay2 setup
-      # (runc treats the source as a dir -> "mount a directory onto a file").
-      # Ships with the repo clone, so no host path / ROOT needed.
-      - ./alloy:/etc/alloy:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /var/log:/var/log:ro
       - alloy-data:/var/lib/alloy/data
+
+configs:
+  alloy_config:
+    content: |
+      // Grafana Alloy config for the Asustor Lockerstor 10 (192.168.1.5)
+      // Ships BOTH Docker container logs and host/server logs to the existing Loki.
+      // LOKI_PUSH_URL comes from the stack env (set in Portainer).
+
+      logging {
+        level  = "info"
+        format = "logfmt"
+      }
+
+      // Where everything gets written: the cluster's Loki, reached from the NAS.
+      loki.write "default" {
+        endpoint {
+          url = sys.env("LOKI_PUSH_URL")
+        }
+        // Stamped onto every line so you can isolate this host in Grafana.
+        external_labels = {
+          host   = "asustor-lockerstor10",
+          source = "mediaserver",
+        }
+      }
+
+      // Docker container logs — auto-discovers every container on the host.
+      discovery.docker "containers" {
+        host = "unix:///var/run/docker.sock"
+      }
+
+      discovery.relabel "docker" {
+        targets = discovery.docker.containers.targets
+
+        // /qbittorrent -> container="qbittorrent"
+        rule {
+          source_labels = ["__meta_docker_container_name"]
+          regex         = "/(.*)"
+          target_label  = "container"
+        }
+        // compose service name, when present
+        rule {
+          source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+          target_label  = "service_name"
+        }
+        // stdout / stderr
+        rule {
+          source_labels = ["__meta_docker_container_log_stream"]
+          target_label  = "stream"
+        }
+        rule {
+          target_label = "job"
+          replacement  = "docker"
+        }
+      }
+
+      loki.source.docker "containers" {
+        host             = "unix:///var/run/docker.sock"
+        targets          = discovery.docker.containers.targets
+        relabel_rules    = discovery.relabel.docker.rules
+        forward_to       = [loki.write.default.receiver]
+        refresh_interval = "15s"
+      }
+
+      // Host / server logs — tail the NAS's /var/log (mounted read-only).
+      local.file_match "varlogs" {
+        path_targets = [
+          {"__path__" = "/var/log/messages", "job" = "varlogs", "host" = "asustor-lockerstor10"},
+          {"__path__" = "/var/log/syslog",   "job" = "varlogs", "host" = "asustor-lockerstor10"},
+          {"__path__" = "/var/log/*.log",    "job" = "varlogs", "host" = "asustor-lockerstor10"},
+        ]
+      }
+
+      loki.source.file "varlogs" {
+        targets    = local.file_match.varlogs.targets
+        forward_to = [loki.write.default.receiver]
+      }
 
 volumes:
   alloy-data:
